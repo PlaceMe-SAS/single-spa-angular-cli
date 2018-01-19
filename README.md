@@ -1,11 +1,11 @@
-# single-spa-angular2
+# single-spa-angular-cli
 Helpers for building [single-spa](https://github.com/CanopyTax/single-spa) applications which use Angular 2.
 
 ## Example
-An example can be found in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples/blob/master/src/angular2/angular2.app.js) repository.
+An example can be found in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples/blob/master/src/angular-cli/angular-cli.app.js) repository.
 
 ## Quickstart
-First, in the child application, run `npm install --save single-spa-angular2` (or `jspm install npm:single-spa-angular2` if your child application is managed by jspm). Then, in your [child app's entry file](https://github.com/CanopyTax/single-spa/blob/docs-1/docs/configuring-child-applications.md#the-entry-file), do the following:
+First, in the child application, run `npm install --save single-spa-angular-cli` (or `jspm install npm:single-spa-angular-cli` if your child application is managed by jspm). Then, in your [child app's entry file](https://github.com/CanopyTax/single-spa/blob/docs-1/docs/configuring-child-applications.md#the-entry-file), do the following:
 
 ```js
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
@@ -42,11 +42,128 @@ function domElementGetter() {
 
 All options are passed to single-spa-angular2 via the `opts` parameter when calling `singleSpaAngular2(opts)`. The following options are available:
 
-- `domElementGetter`: (required) A function that takes in no arguments and returns a DOMElement. This dom element is where the angular application will be bootstrapped, mounted, and unmounted.
-- `mainModule`: (required) An Angular 2 module class. If you're using Typescript or ES6 decorators, this is a class with the @NgModule decorator on it.
-- `angularPlatform`: (required) The platform with which to bootstrap your module. The "Angular platform" refers to whether the code is running on the browser, mobile, server, etc. In the case of a single-spa application, you should use the `platformBrowserDynamic` platform.
-- `template`: (required) An html string that will be put into the DOM Element returned by `domElementGetter`. This template can be anything, but it is recommended that you keeping it simple by making it only one Angular component. For example, `<my-component />` is recommended, but `<div><my-component /><span>Hello</span><another-component /></div>` is allowed. Note that `innerHTML` is used to put the template onto the DOM.
-- `Router`: (optional) The angular router class. If not provided, single-spa-angular2 will assume you are not using @angular/router.
+- `selector`: (required) The angular application root tag, ex : app-root.
+- `baseScriptUrl`: This is your angular cli server url (or production server when script will be present), ex : http://localhost:4200.
+- `scripts`: (required) All your application builded scripts, ex : scripts: ['inline.bundle.js', 'polyfills.bundle.js', 'styles.bundle.js', 'vendor.bundle.js', 'main.bundle.js']
 
-## Other notes
-- If you have multiple angular child applications, make sure that `reflect-metadata` is only imported once in the root application and is not imported again in the child applications. Otherwise, you might see an `No NgModule metadata found` error. See [issue thread](https://github.com/CanopyTax/single-spa-angular2/issues/2#issuecomment-347864894) for more details.
+## This project is an Angular 5 portal as microfrontend lazy loaded thanks to the CLI
+
+## How to get the examples running locally
+```bash
+git clone git@github.com:PlaceMe-SAS/single-spa-examples.git
+cd single-spa-examples
+npm install
+npm run start
+open http://localhost:8080
+```
+
+### Serve your angular project
+```bash
+npm install -g @angular/cli
+cd src/menu
+npm install
+ng serve --port=4200
+```
+open http://localhost:4200
+
+```bash
+npm install -g @angular/cli
+cd src/home
+npm install
+ng serve
+```
+open http://localhost:4201
+
+### For production apps mode
+```bash
+ng build --prod
+```
+And replace the target url of your child app
+
+repeat for all angular cli projects
+
+## Add an angular cli apps
+```bash
+cd src
+ng new app1 --prefix=app1
+cd app1
+ng serve --port=4202
+```
+open http://localhost:4202
+
+```
+// src/app1/loader.js
+
+import singleSpaAngularCli from 'single-spa-angular-cli';
+
+const lifecycles = singleSpaAngularCli({
+    selector: 'app1-root',
+    baseScriptUrl: 'http://localhost:4202',
+    scripts: [
+        'inline.bundle.js',
+        'polyfills.bundle.js',
+        'styles.bundle.js',
+        'vendor.bundle.js',
+        'main.bundle.js'
+    ]
+});
+
+export const bootstrap = [
+    lifecycles.bootstrap
+];
+
+export const mount = [
+    lifecycles.mount
+];
+
+export const unmount = [
+    lifecycles.unmount
+];
+```
+
+```
+// src/app1/src/polyfills.ts
+
+// Comment zone.js, it is globaly imported by the portal
+// import 'zone.js/dist/zone';  // Included with Angular CLI.
+```
+
+```
+// src/app1/src/index.html
+
+  <app1-root></app1-root>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zone.js/0.8.19/zone.js"></script>
+</body>
+```
+
+```
+// src/main.js
+
+mainRegisterApplication('menu', () => import('./menu/loader.js'), singleSpaAngularCliRouter.hashPrefix('/**')).then(() => {
+    registerApplication('home', () => import('./home/loader.js'), singleSpaAngularCliRouter.hashPrefix('/home', true));
+    registerApplication('app1', () => import('./app1/loader.js'), singleSpaAngularCliRouter.hashPrefix('/app1'));
+});
+start();
+```
+
+```
+// src/app1/src/main.ts
+
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { singleSpaAngularCliPlatform } from 'single-spa-angular-cli/single-spa-angular-cli-platform';
+
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+declare const window;
+
+if (environment.production) {
+  enableProdMode();
+}
+
+singleSpaAngularCliPlatform.mount('app1-root').subscribe((attachUnmount) => {
+  platformBrowserDynamic().bootstrapModule(AppModule).then(attachUnmount);
+});
+```
