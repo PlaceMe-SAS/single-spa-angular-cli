@@ -8,34 +8,33 @@ An example can be found in the [single-spa-examples](https://github.com/CanopyTa
 First, in the child application, run `npm install --save single-spa-angular-cli` (or `jspm install npm:single-spa-angular-cli` if your child application is managed by jspm). Then, in your [child app's entry file](https://github.com/CanopyTax/single-spa/blob/docs-1/docs/configuring-child-applications.md#the-entry-file), do the following:
 
 ```js
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import singleSpaAngular2 from 'single-spa-angular2';
-import mainModule from './main-module.ts';
-import {Router} from '@angular/router';
+// src/app1/loader.js
 
-const ng2Lifecycles = singleSpaAngular2({
-	domElementGetter,
-	mainModule,
-	angularPlatform: platformBrowserDynamic(),
-	template: `<component-to-render />`,
-	Router,
-})
+import singleSpaAngularCli from 'single-spa-angular-cli';
+
+const lifecycles = singleSpaAngularCli({
+    selector: 'app1-root',
+    baseScriptUrl: 'http://localhost:4202',
+    scripts: [
+        'inline.bundle.js',
+        'polyfills.bundle.js',
+        'styles.bundle.js',
+        'vendor.bundle.js',
+        'main.bundle.js'
+    ]
+});
 
 export const bootstrap = [
-	ng2Lifecycles.bootstrap,
+    lifecycles.bootstrap
 ];
 
 export const mount = [
-	ng2Lifecycles.mount,
+    lifecycles.mount
 ];
 
 export const unmount = [
-	ng2Lifecycles.unmount,
+    lifecycles.unmount
 ];
-
-function domElementGetter() {
-	return document.getElementById('angular2');
-}
 ```
 
 ## Options
@@ -91,7 +90,7 @@ ng serve --port=4202
 ```
 open http://localhost:4202
 
-```
+```js
 // src/app1/loader.js
 
 import singleSpaAngularCli from 'single-spa-angular-cli';
@@ -121,14 +120,14 @@ export const unmount = [
 ];
 ```
 
-```
+```js
 // src/app1/src/polyfills.ts
 
 // Comment zone.js, it is globaly imported by the portal
 // import 'zone.js/dist/zone';  // Included with Angular CLI.
 ```
 
-```
+```html
 // src/app1/src/index.html
 
   <app1-root></app1-root>
@@ -136,7 +135,7 @@ export const unmount = [
 </body>
 ```
 
-```
+```js
 // src/main.js
 
 mainRegisterApplication('menu', () => import('./menu/loader.js'), singleSpaAngularCliRouter.hashPrefix('/**')).then(() => {
@@ -146,7 +145,7 @@ mainRegisterApplication('menu', () => import('./menu/loader.js'), singleSpaAngul
 start();
 ```
 
-```
+```js
 // src/app1/src/main.ts
 
 import { enableProdMode } from '@angular/core';
