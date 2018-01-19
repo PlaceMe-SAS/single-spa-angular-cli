@@ -1,15 +1,16 @@
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
 
-declare const window;
+declare const window: any;
 
 export class SingleSpaAngularCliPlatform {
 
     appName: string;
 
-    mount(appName: string): Observable<any> {
+    mount(appName: string): Observable<Function> {
         this.appName = appName;
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<Function>) => {
             if (this.isSingleSpaApp()) {
                 window[this.appName] = {};
                 window[this.appName].mount = () => {
