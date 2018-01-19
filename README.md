@@ -97,7 +97,7 @@ import singleSpaAngularCli from 'single-spa-angular-cli';
 
 const lifecycles = singleSpaAngularCli({
     selector: 'app1-root',
-    baseScriptUrl: 'http://localhost:4202',
+    baseScriptUrl: '/apps/app1',
     scripts: [
         'inline.bundle.js',
         'polyfills.bundle.js',
@@ -118,6 +118,7 @@ export const mount = [
 export const unmount = [
     lifecycles.unmount
 ];
+
 ```
 
 ```js
@@ -150,13 +151,10 @@ start();
 
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { singleSpaAngularCliPlatform } from 'single-spa-angular-cli/single-spa-angular-cli-platform';
+import { singleSpaAngularCliPlatform } from 'single-spa-angular-cli/src/single-spa-angular-cli-platform';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-
-declare const window;
 
 if (environment.production) {
   enableProdMode();
