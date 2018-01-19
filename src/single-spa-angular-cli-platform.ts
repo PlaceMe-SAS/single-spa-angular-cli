@@ -8,9 +8,9 @@ export class SingleSpaAngularCliPlatform {
 
     appName: string;
 
-    mount(appName: string): Observable<Function> {
+    mount(appName: string): Observable<any> {
         this.appName = appName;
-        return Observable.create((observer: Observer<Function>) => {
+        return Observable.create((observer: Observer<any>) => {
             if (this.isSingleSpaApp()) {
                 window[this.appName] = {};
                 window[this.appName].mount = () => {
