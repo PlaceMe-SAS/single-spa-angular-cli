@@ -1,4 +1,3 @@
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -7,9 +6,11 @@ declare const window: any;
 export class SingleSpaAngularCliPlatform {
 
     appName: string;
+    router: any;
 
-    mount(appName: string): Observable<any> {
+    mount(appName: string, router?: any): Observable<any> {
         this.appName = appName;
+        this.router = router;
         return Observable.create((observer: Observer<any>) => {
             if (this.isSingleSpaApp()) {
                 window[this.appName] = {};
@@ -27,9 +28,9 @@ export class SingleSpaAngularCliPlatform {
             window[this.appName].unmount = () => {
                 if (module) {
                     module.destroy();
-                    try {
-                        module.injector.get(Router).dispose();
-                    } catch (err) { }
+                    if(this.router){
+                        module.injector.get(this.router).dispose();
+                    }
                 }
             };
         }

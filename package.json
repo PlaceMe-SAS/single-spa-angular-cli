@@ -1,6 +1,6 @@
 {
   "name": "single-spa-angular-cli",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "description": "Helpers for building single-spa applications which use Angular Cli",
   "main": "lib/single-spa-angular-cli.js",
   "scripts": {
@@ -24,10 +24,6 @@
   },
   "homepage": "https://github.com/PlaceMe-SAS/single-spa-angular-cli#readme",
   "dependencies": {
-    "@angular/common": "^5.2.1",
-    "@angular/core": "^5.2.1",
-    "@angular/platform-browser": "^5.2.1",
-    "@angular/router": "^5.2.1",
     "@types/core-js": "^0.9.45",
     "rxjs": "^5.5.6",
     "single-spa": "^3.7.0"
