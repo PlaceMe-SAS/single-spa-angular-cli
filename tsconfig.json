@@ -6,15 +6,23 @@
         "sourceMap": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "lib": [ "es2015", "dom" ],
+        "removeComments": false,
         "noImplicitAny": true,
-        "suppressImplicitAnyIndexErrors": true
+        "declaration": true,
+        "outDir": "./lib",
+        "stripInternal": true,
+        "lib": [
+            "es6",
+            "dom"
+        ]
     },
+    "include": [
+        "./src/single-spa-angular-cli-platform.ts"
+    ],
     "files": [
-        "src/single-spa-angular-cli-platform.ts"
+        "./node_modules/@types/core-js/index.d.ts"
     ],
-    "exclude": [
-        "node_modules"
-    ],
-    "typings": "src/single-spa-angular-cli-platform.d.ts",
+    "angularCompilerOptions": {
+        "skipTemplateCodegen": true
+    }
 }
