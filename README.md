@@ -1,8 +1,8 @@
 # single-spa-angular-cli
-Helpers for building [single-spa](https://github.com/CanopyTax/single-spa) applications which use Angular 2.
+Helpers for building [single-spa](https://github.com/CanopyTax/single-spa) applications which use Angular Cli.
 
 ## Example
-An example can be found in the [single-spa-examples](https://github.com/CanopyTax/single-spa-examples/blob/master/src/angular-cli/angular-cli.app.js) repository.
+An example can be found in the [single-spa-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.
 
 ## Quickstart
 First, in the child application, run `npm install --save single-spa-angular-cli` (or `jspm install npm:single-spa-angular-cli` if your child application is managed by jspm). Then, in your [child app's entry file](https://github.com/CanopyTax/single-spa/blob/docs-1/docs/configuring-child-applications.md#the-entry-file), do the following:
@@ -39,11 +39,21 @@ export const unmount = [
 
 ## Options
 
-All options are passed to single-spa-angular2 via the `opts` parameter when calling `singleSpaAngular2(opts)`. The following options are available:
+All options are passed to single-spa-angular2 via the `opts` parameter when calling `singleSpaAngularCli(opts)`. The following options are available:
 
 - `selector`: (required) The angular application root tag, ex : app-root.
 - `baseScriptUrl`: This is your angular cli server url (or production server when script will be present), ex : http://localhost:4200.
-- `scripts`: (required) All your application builded scripts, ex : scripts: ['inline.bundle.js', 'polyfills.bundle.js', 'styles.bundle.js', 'vendor.bundle.js', 'main.bundle.js']
+- `scripts`: (required) All your application builded scripts, ex : 
+```js
+[
+    'inline.bundle.js',
+    'polyfills.bundle.js',
+    'styles.bundle.js',
+    'vendor.bundle.js',
+    'main.bundle.js',
+    // And all your lazy loaded module generated
+]
+```
 
 ## This project is an Angular 5 portal as microfrontend lazy loaded thanks to the CLI
 
@@ -138,6 +148,12 @@ export const unmount = [
 
 ```js
 // src/main.js
+
+import { registerApplication, start } from 'single-spa';
+import { mainRegisterApplication, singleSpaAngularCliRouter } from 'single-spa-angular-cli/src/utils';
+import 'babel-polyfill';
+import 'zone.js';
+
 
 mainRegisterApplication('menu', () => import('./menu/loader.js'), singleSpaAngularCliRouter.hashPrefix('/**')).then(() => {
     registerApplication('home', () => import('./home/loader.js'), singleSpaAngularCliRouter.hashPrefix('/home', true));
