@@ -1,6 +1,6 @@
 {
   "name": "single-spa-angular-cli",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Helpers for building single-spa applications which use Angular Cli",
   "main": "lib/single-spa-angular-cli.js",
   "scripts": {
