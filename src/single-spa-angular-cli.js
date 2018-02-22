@@ -1,3 +1,5 @@
+import { unloadApplication } from 'single-spa';
+
 const defaultOpts = {
   // required opts
   selector: null,
@@ -30,7 +32,8 @@ export default function singleSpaAngularCli(userOpts) {
   return {
     bootstrap: bootstrap.bind(null, opts),
     mount: mount.bind(null, opts),
-    unmount: unmount.bind(null, opts)
+    unmount: unmount.bind(null, opts),
+    unload: unload.bind(null, opts)
   };
 }
 
@@ -62,10 +65,21 @@ function unmount(opts) {
     if (window[opts.selector]) {
       window[opts.selector].unmount();
       getContainerEl(opts).innerHTML = '';
+      unloadApplication(opts.name, { waitForUnmount: true });
       resolve();
     } else {
       reject(`Cannot unmount ${opts.selector} because that is not bootstraped`);
     }
+  });
+}
+
+function unload(opts) {
+  return new Promise((resolve, reject) => {
+    opts.scripts.reduce(
+      (prev, scriptName) => prev.then(unloadTag(`${opts.baseScriptUrl}/${scriptName}`)),
+      Promise.resolve()
+    );
+    resolve();
   });
 }
 
@@ -85,12 +99,12 @@ async function runPromisesInSequence(promises) {
 }
 
 function loadTag(url, domEl) {
-	const urlParts =  url.split('.');
-	if (urlParts[urlParts.length - 1] === "css") {
-		return loadLinkTag(url, domEl);
-	} else {
-		return loadScriptTag(url, domEl);
-	}
+  const urlParts = url.split('.');
+  if (urlParts[urlParts.length - 1] === 'css') {
+    return loadLinkTag(url, domEl);
+  } else {
+    return loadScriptTag(url, domEl);
+  }
 }
 
 function loadScriptTag(url, domEl) {
@@ -104,6 +118,7 @@ function loadScriptTag(url, domEl) {
         reject(err);
       };
       script.src = url;
+      script.id = hashCode(url);
       document.head.appendChild(script);
     });
   };
@@ -119,9 +134,31 @@ function loadLinkTag(url, domEl) {
       link.onerror = err => {
         reject(err);
       };
-			link.href = url;
-			link.rel = "stylesheet";
+      link.href = url;
+      link.rel = 'stylesheet';
+      link.id = hashCode(url);
       document.head.appendChild(link);
     });
   };
+}
+
+function unloadTag(url) {
+  return () => {
+    return new Promise((resolve, reject) => {
+      const tag = document.getElementById(hashCode(url));
+      document.head.removeChild(tag);
+      resolve();
+    });
+  };
+}
+
+function hashCode(str) {
+  var hash = 0;
+  if (str.length == 0) return hash;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash = hash & hash;
+    hash = hash >>> 1;
+  }
+  return hash;
 }
