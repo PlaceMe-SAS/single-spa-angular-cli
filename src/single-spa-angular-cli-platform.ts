@@ -28,7 +28,7 @@ export class SingleSpaAngularCliPlatform {
             window[this.appName].unmount = () => {
                 if (module) {
                     module.destroy();
-                    if(this.router){
+                    if (this.router) {
                         module.injector.get(this.router).dispose();
                     }
                 }
@@ -41,7 +41,7 @@ export class SingleSpaAngularCliPlatform {
             window[this.appName].unload = () => {
                 if (module) {
                     module.delete();
-                    if(this.router){
+                    if (this.router) {
                         module.injector.get(this.router).dispose();
                     }
                 }

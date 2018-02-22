@@ -9,11 +9,11 @@ class SingleSpaAngularCliRouter {
 
     hashPrefix(prefix, isDefaultPage) {
         this.routes.push(prefix);
-        if(isDefaultPage){
+        if (isDefaultPage) {
             this.defaultRoute = `#${prefix}`;
         }
         return (location) => {
-            if(prefix === '/**') {
+            if (prefix === '/**') {
                 return true;
             }
             const route = this.routes.find(r => location.hash.indexOf(`#${r}`) === 0);

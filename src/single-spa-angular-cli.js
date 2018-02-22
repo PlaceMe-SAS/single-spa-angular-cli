@@ -111,7 +111,7 @@ function loadScriptTag(url, domEl) {
   return () => {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.onload = function() {
+      script.onload = function () {
         resolve();
       };
       script.onerror = err => {
@@ -128,7 +128,7 @@ function loadLinkTag(url, domEl) {
   return () => {
     return new Promise((resolve, reject) => {
       const link = document.createElement('link');
-      link.onload = function() {
+      link.onload = function () {
         resolve();
       };
       link.onerror = err => {
