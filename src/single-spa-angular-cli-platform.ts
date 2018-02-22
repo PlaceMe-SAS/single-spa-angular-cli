@@ -36,6 +36,19 @@ export class SingleSpaAngularCliPlatform {
         }
     }
 
+    unload(module: any) {
+        if (this.isSingleSpaApp()) {
+            window[this.appName].unload = () => {
+                if (module) {
+                    module.delete();
+                    if(this.router){
+                        module.injector.get(this.router).dispose();
+                    }
+                }
+            };
+        }
+    }
+
     private isSingleSpaApp(): boolean {
         return document.querySelector('body').hasAttribute('data-single-spa');
     }
