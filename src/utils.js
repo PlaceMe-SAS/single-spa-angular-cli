@@ -29,11 +29,13 @@ class SingleSpaAngularCliRouter {
 
 export const singleSpaAngularCliRouter = new SingleSpaAngularCliRouter();
 
+/**
 export const mainRegisterApplication = (appName, loadingFunction, activityFunction) => {
     registerApplication(appName, loadingFunction, activityFunction);
     return new Promise(resolve => {
         setTimeout(() => {
             resolve();
-        }, 100);
+        }, 500);
     });
 };
+ */
