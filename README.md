@@ -129,6 +129,10 @@ export const unmount = [
     lifecycles.unmount
 ];
 
+export const unload = [
+    lifecycles.unload
+];
+
 ```
 
 ```js
