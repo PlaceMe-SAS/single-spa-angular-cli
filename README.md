@@ -13,6 +13,7 @@ First, in the child application, run `npm install --save single-spa-angular-cli`
 import singleSpaAngularCli from 'single-spa-angular-cli';
 
 const lifecycles = singleSpaAngularCli({
+    name: 'app1',
     selector: 'app1-root',
     baseScriptUrl: 'http://localhost:4202',
     scripts: [
@@ -106,6 +107,7 @@ open http://localhost:4202
 import singleSpaAngularCli from 'single-spa-angular-cli';
 
 const lifecycles = singleSpaAngularCli({
+    name: 'app1',
     selector: 'app1-root',
     baseScriptUrl: '/apps/app1',
     scripts: [
