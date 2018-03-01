@@ -2,10 +2,10 @@
 Helpers for building [single-spa](https://github.com/CanopyTax/single-spa) applications which use Angular Cli.
 
 ## Example
-An example can be found in the [single-spa-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.
+An example can be found in the [single-spa-angular-cli-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.
 
 ## Quickstart
-First, in the child application, run `npm install --save single-spa-angular-cli` (or `jspm install npm:single-spa-angular-cli` if your child application is managed by jspm). Then, in your [child app's entry file](https://github.com/CanopyTax/single-spa/blob/docs-1/docs/configuring-child-applications.md#the-entry-file), do the following:
+First, in the child application, run `npm install --save single-spa-angular-cli`. Then, in your [single-spa application](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md), do the following:
 
 ```js
 // src/loaders/app1.js
@@ -65,4 +65,4 @@ All options are passed to single-spa-angular2 via the `opts` parameter when call
 ]
 ```
 ## Full documentation here
-An example can be found in the [single-spa-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.
+An example can be found in the [single-spa-angular-cli-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.

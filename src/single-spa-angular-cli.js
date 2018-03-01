@@ -1,5 +1,3 @@
-import { unloadApplication, getAppNames, getAppStatus } from 'single-spa';
-
 const defaultOpts = {
   // required opts
   name: null,
@@ -18,22 +16,23 @@ const getContainerEl = (opts) => {
   return el;
 };
 
-const noLoadingApp = (currentApp) => {
+const noLoadingApp = (currentApp, singleSpa) => {
+  const {getAppNames, getAppStatus, BOOTSTRAPPING} = singleSpa
   const firstInMounting = getAppNames().find((appName) => {
-    return getAppStatus(appName) === 'BOOTSTRAPPING';
+    return getAppStatus(appName) === BOOTSTRAPPING;
   });
   const firstInMountingIndex = getAppNames().indexOf(firstInMounting);
   const currentIndex = getAppNames().indexOf(currentApp);
   return currentIndex <= firstInMountingIndex;
 };
 
-const onNotLoadingApp = (currentApp) => {
+const onNotLoadingApp = (currentApp, singleSpa) => {
   return new Promise((resolve, reject) => {
     let time = 0;
     const INTERVAL = 100;
     const interval = setInterval(() => {
       time += INTERVAL;
-      if (noLoadingApp(currentApp)) {
+      if (noLoadingApp(currentApp, singleSpa)) {
         clearInterval(interval);
         resolve();
       }
@@ -114,15 +113,16 @@ const unloadTag = (url) => {
   };
 };
 
-const bootstrap = (opts) => {
+const bootstrap = (opts, props) => {
+  const {singleSpa} = props
   return new Promise((resolve, reject) => {
-    onNotLoadingApp(opts.name).then(() => {
+    onNotLoadingApp(opts.name, singleSpa).then(() => {
       loadAllAssets(opts).then(resolve, reject);
     }, reject);
   });
 };
 
-const mount = (opts) => {
+const mount = (opts, props) => {
   return new Promise((resolve, reject) => {
     const domEl = getContainerEl(opts);
     const angularRootEl = document.createElement(opts.selector);
@@ -137,7 +137,8 @@ const mount = (opts) => {
   });
 };
 
-const unmount = (opts) => {
+const unmount = (opts, props) => {
+  const {singleSpa: {unloadApplication, getAppNames}} = props
   return new Promise((resolve, reject) => {
     if (window[opts.selector]) {
       window[opts.selector].unmount();
@@ -154,7 +155,7 @@ const unmount = (opts) => {
   });
 };
 
-const unload = (opts) => {
+const unload = (opts, props) => {
   return new Promise((resolve, reject) => {
     opts.scripts.concat(opts.styles).reduce(
       (prev, scriptName) => prev.then(unloadTag(`${opts.baseScriptUrl}/${scriptName}`)),
