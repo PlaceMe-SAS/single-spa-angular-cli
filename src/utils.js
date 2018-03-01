@@ -1,4 +1,4 @@
-import { registerApplication } from 'single-spa';
+// import { registerApplication } from 'single-spa';
 
 class SingleSpaAngularCliRouter {
 
