@@ -7,7 +7,7 @@ class SingleSpaAngularCliRouter {
     }
 
     setPathStrategy(pathStrategy) {
-        this.pathStrategy = 'pathStrategy'
+        this.pathStrategy = pathStrategy
     }
 
     getPath(location) {
