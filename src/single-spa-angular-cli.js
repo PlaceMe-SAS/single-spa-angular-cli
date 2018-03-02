@@ -1,3 +1,5 @@
+window.singleSpaAngularCli = window.singleSpaAngularCli || {};
+
 const defaultOpts = {
   // required opts
   name: null,
@@ -127,8 +129,8 @@ const mount = (opts, props) => {
     const domEl = getContainerEl(opts);
     const angularRootEl = document.createElement(opts.selector);
     domEl.appendChild(angularRootEl);
-    if (window[opts.selector]) {
-      window[opts.selector].mount(props);
+    if (window.singleSpaAngularCli[opts.name]) {
+      window.singleSpaAngularCli[opts.name].mount(props);
       resolve();
     } else {
       console.error(`Cannot mount ${opts.name} because that is not bootstraped`);
@@ -140,8 +142,8 @@ const mount = (opts, props) => {
 const unmount = (opts, props) => {
   const {singleSpa: {unloadApplication, getAppNames}} = props
   return new Promise((resolve, reject) => {
-    if (window[opts.selector]) {
-      window[opts.selector].unmount();
+    if (window.singleSpaAngularCli[opts.name]) {
+      window.singleSpaAngularCli[opts.name].unmount();
       getContainerEl(opts).remove();
       if (getAppNames().indexOf(opts.name) !== -1) {
         unloadApplication(opts.name, { waitForUnmount: true });

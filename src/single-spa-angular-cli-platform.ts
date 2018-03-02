@@ -2,19 +2,20 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 declare const window: any;
+window.singleSpaAngularCli = window.singleSpaAngularCli || {};
 
 export class SingleSpaAngularCliPlatform {
 
-    appName: string;
+    name: string;
     router: any;
 
-    mount(appName: string, router?: any): Observable<any> {
-        this.appName = appName;
+    mount(name: string, router?: any): Observable<any> {
+        this.name = name;
         this.router = router;
         return Observable.create((observer: Observer<any>) => {
             if (this.isSingleSpaApp()) {
-                window[this.appName] = {};
-                window[this.appName].mount = (props: any) => {
+                window.singleSpaAngularCli[this.name] = window.singleSpaAngularCli[this.name] || {};
+                window.singleSpaAngularCli[this.name].mount = (props: any) => {
                     observer.next({ props, attachUnmount: this.unmount.bind(this) });
                 };
             } else {
@@ -25,7 +26,7 @@ export class SingleSpaAngularCliPlatform {
 
     unmount(module: any) {
         if (this.isSingleSpaApp()) {
-            window[this.appName].unmount = () => {
+            window.singleSpaAngularCli[this.name].unmount = () => {
                 if (module) {
                     module.destroy();
                     if (this.router) {
@@ -38,7 +39,7 @@ export class SingleSpaAngularCliPlatform {
 
     unload(module: any) {
         if (this.isSingleSpaApp()) {
-            window[this.appName].unload = () => {
+            window.singleSpaAngularCli[this.name].unload = () => {
                 if (module) {
                     module.delete();
                     if (this.router) {
