@@ -128,7 +128,7 @@ const mount = (opts, props) => {
     const angularRootEl = document.createElement(opts.selector);
     domEl.appendChild(angularRootEl);
     if (window[opts.selector]) {
-      window[opts.selector].mount();
+      window[opts.selector].mount(props);
       resolve();
     } else {
       console.error(`Cannot mount ${opts.name} because that is not bootstraped`);

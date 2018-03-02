@@ -14,11 +14,11 @@ export class SingleSpaAngularCliPlatform {
         return Observable.create((observer: Observer<any>) => {
             if (this.isSingleSpaApp()) {
                 window[this.appName] = {};
-                window[this.appName].mount = () => {
-                    observer.next(this.unmount.bind(this));
+                window[this.appName].mount = (props: any) => {
+                    observer.next({ props, attachUnmount: this.unmount.bind(this) });
                 };
             } else {
-                observer.next(this.unmount.bind(this));
+                observer.next({ props: {}, attachUnmount: this.unmount.bind(this) });
             }
         });
     }
