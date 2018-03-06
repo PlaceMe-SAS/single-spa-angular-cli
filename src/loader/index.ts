@@ -2,7 +2,6 @@ import { Options } from './options.model';
 
 declare const window: any;
 window.singleSpaAngularCli = window.singleSpaAngularCli || {};
-window.singleSpaAngularCli.isSingleSpa = true;
 
 const defaultOpts: Options = {
     name: null,
@@ -118,6 +117,7 @@ const unloadTag = (url: string) => {
 };
 
 const bootstrap = (opts: Options, props: any) => {
+    window.singleSpaAngularCli.isSingleSpa = true;
     const { singleSpa } = props
     return new Promise((resolve, reject) => {
         onNotLoadingApp(opts.name, singleSpa).then(() => {
