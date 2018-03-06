@@ -1,5 +1,8 @@
 export class Router {
 
+    PATHNAME: string = 'pathname';
+    HASH: string = 'hash';
+
     routes: any[];
     defaultRoute: string;
     pathStrategy: string;
@@ -7,7 +10,7 @@ export class Router {
     constructor() {
         this.routes = [];
         this.defaultRoute = null;
-        this.pathStrategy = 'hash';
+        this.setPathStrategy(this.HASH);
     }
 
     setPathStrategy(pathStrategy: string) {
