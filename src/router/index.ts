@@ -1,4 +1,8 @@
-class SingleSpaAngularCliRouter {
+export class Router {
+
+    routes: any[];
+    defaultRoute: string;
+    pathStrategy: string;
 
     constructor() {
         this.routes = [];
@@ -6,20 +10,20 @@ class SingleSpaAngularCliRouter {
         this.pathStrategy = 'hash';
     }
 
-    setPathStrategy(pathStrategy) {
+    setPathStrategy(pathStrategy: string) {
         this.pathStrategy = pathStrategy
     }
 
-    getPath(location) {
+    getPath(location: any) {
         return location[this.pathStrategy];
     }
 
-    hashPrefix(prefix, isDefaultPage) {
+    hashPrefix(prefix: string, isDefaultPage: boolean) {
         this.routes.push(prefix);
         if (isDefaultPage) {
             this.defaultRoute = `#${prefix}`;
         }
-        return (location) => {
+        return (location: any) => {
             if (prefix === '/**') {
                 return true;
             }
@@ -33,13 +37,11 @@ class SingleSpaAngularCliRouter {
         }
     }
 
-    hasParameter(parameterName, paramaterValue = '') {
-        return (location) => {
+    hasParameter(parameterName: string, paramaterValue: string = '') {
+        return (location: any) => {
             const path = this.getPath(location);
             return path.indexOf(`?${parameterName}=${paramaterValue}`) !== -1;
         };
     }
 
 }
-
-export const singleSpaAngularCliRouter = new SingleSpaAngularCliRouter();

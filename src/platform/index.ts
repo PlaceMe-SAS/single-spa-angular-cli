@@ -4,7 +4,7 @@ import { Observer } from 'rxjs/Observer';
 declare const window: any;
 window.singleSpaAngularCli = window.singleSpaAngularCli || {};
 
-export class SingleSpaAngularCliPlatform {
+export class Platform {
 
     name: string;
     router: any;
@@ -17,9 +17,11 @@ export class SingleSpaAngularCliPlatform {
                 window.singleSpaAngularCli[this.name] = window.singleSpaAngularCli[this.name] || {};
                 window.singleSpaAngularCli[this.name].mount = (props: any) => {
                     observer.next({ props, attachUnmount: this.unmount.bind(this) });
+                    observer.complete();
                 };
             } else {
                 observer.next({ props: {}, attachUnmount: this.unmount.bind(this) });
+                observer.complete();
             }
         });
     }
@@ -37,22 +39,7 @@ export class SingleSpaAngularCliPlatform {
         }
     }
 
-    unload(module: any) {
-        if (this.isSingleSpaApp()) {
-            window.singleSpaAngularCli[this.name].unload = () => {
-                if (module) {
-                    module.delete();
-                    if (this.router) {
-                        module.injector.get(this.router).dispose();
-                    }
-                }
-            };
-        }
-    }
-
     private isSingleSpaApp(): boolean {
-        return document.querySelector('body').hasAttribute('data-single-spa');
+        return window.singleSpaAngularCli.isSingleSpa;
     }
 }
-
-export const singleSpaAngularCliPlatform = new SingleSpaAngularCliPlatform();

@@ -2,7 +2,7 @@
   "name": "single-spa-angular-cli",
   "version": "0.2.3",
   "description": "Helpers for building single-spa applications which use Angular Cli",
-  "main": "lib/single-spa-angular-cli.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "rimraf lib && tsc && babel src --out-dir lib",
     "test": "echo \"Error: no test specified\" && exit 1",
