@@ -1,8 +1,5 @@
 export class Router {
 
-    PATHNAME: string = 'pathname';
-    HASH: string = 'hash';
-
     routes: any[];
     defaultRoute: string;
     pathStrategy: string;
@@ -10,41 +7,30 @@ export class Router {
     constructor() {
         this.routes = [];
         this.defaultRoute = null;
-        this.setPathStrategy(this.HASH);
     }
 
-    setPathStrategy(pathStrategy: string) {
-        this.pathStrategy = pathStrategy
-    }
-
-    getPath(location: any) {
-        return location[this.pathStrategy];
-    }
-
-    hashPrefix(prefix: string, isDefaultPage: boolean) {
+    hashPrefix(prefix: string, isDefaultPage?: boolean): (location: any) => boolean {
         this.routes.push(prefix);
         if (isDefaultPage) {
-            this.defaultRoute = `#${prefix}`;
+            this.defaultRoute = prefix;
         }
-        return (location: any) => {
+        return (location: any): boolean => {
             if (prefix === '/**') {
                 return true;
             }
-            const path = this.getPath(location);
-            const route = this.routes.find(r => path.indexOf(`#${r}`) === 0);
+            const path = location.pathname;
+            const route = this.routes.find(r => path.indexOf(r) === 0);
             if (route) {
-                return path.indexOf(`#${prefix}`) === 0 || prefix === '/**';
+                return path.indexOf(`${prefix}`) === 0 || prefix === '/**';
             } else {
-                location.assign(this.defaultRoute);
+                history.pushState(null, null, this.defaultRoute);
+                return false;
             }
         }
     }
 
-    hasParameter(parameterName: string, paramaterValue: string = '') {
-        return (location: any) => {
-            const path = this.getPath(location);
-            return path.indexOf(`?${parameterName}=${paramaterValue}`) !== -1;
-        };
+    hasParameter(parameterName: string, paramaterValue: string = ''): (location: any) => boolean {
+        return (location: any) => location.search.indexOf(`?${parameterName}=${paramaterValue}`) !== -1;
     }
 
 }
