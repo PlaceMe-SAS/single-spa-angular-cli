@@ -42,6 +42,6 @@ All options are passed to single-spa-angular2 via the `opts` parameter when call
 - `name`: (required) The name of the single spa application, ex : app.
 - `selector`: (required) The angular application root tag, ex : app-root.
 - `outputPath`: (required) The output path of the cli apps after ng build --prod.
-```
+
 ## Full documentation here
 An example can be found in the [single-spa-angular-cli-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.
