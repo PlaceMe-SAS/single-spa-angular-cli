@@ -1,5 +1,6 @@
-class Utils {
+import { LoaderLeash } from "../loader/loader-leash.model";
+
+export class Utils {
+
 
 }
-
-export const utils = new Utils();

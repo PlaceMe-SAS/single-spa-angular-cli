@@ -1,36 +1,47 @@
+declare const history: History;
+
 export class Router {
 
-    routes: any[];
+    routes: string[];
     defaultRoute: string;
-    pathStrategy: string;
 
     constructor() {
         this.routes = [];
-        this.defaultRoute = null;
     }
 
-    hashPrefix(prefix: string, isDefaultPage?: boolean): (location: any) => boolean {
+    hashPrefix(prefix: string, isDefaultPage?: boolean): (location: Location) => boolean {
         this.routes.push(prefix);
         if (isDefaultPage) {
             this.defaultRoute = prefix;
         }
-        return (location: any): boolean => {
+        return (location: Location): boolean => {
             if (prefix === '/**') {
                 return true;
             }
-            const path = location.pathname;
-            const route = this.routes.find(r => path.indexOf(r) === 0);
+            const route = this.routes.find(r => this.pathMatch(location, r));
             if (route) {
-                return path.indexOf(`${prefix}`) === 0 || prefix === '/**';
+                return this.pathMatch(location, prefix);
             } else {
-                history.pushState(null, null, this.defaultRoute);
+                this.navigate(this.defaultRoute);
                 return false;
             }
         }
     }
 
-    hasParameter(parameterName: string, paramaterValue: string = ''): (location: any) => boolean {
-        return (location: any) => location.search.indexOf(`?${parameterName}=${paramaterValue}`) !== -1;
+    hasParameter(key: string, value: string = ''): (location: Location) => boolean {
+        return (location: any) => this.parameterMatch(location, key, value);
+    }
+
+    public navigate(path: string): void {
+        history.pushState(null, null, path);
+    }
+
+    private pathMatch(location: Location, path: string): boolean {
+        return location.pathname.indexOf(path) === 0;
+    }
+
+    private parameterMatch(location: Location, key: string, value: string): boolean {
+        return location.search.indexOf(`${key}=${value}`) !== -1;
     }
 
 }

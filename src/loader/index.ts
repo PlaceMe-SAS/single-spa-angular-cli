@@ -3,12 +3,36 @@ import { Options } from './options.model';
 declare const window: any;
 window.singleSpaAngularCli = window.singleSpaAngularCli || {};
 
-const defaultOpts: Options = {
-    name: null,
-    selector: null,
-    baseScriptUrl: null,
-    styles: [],
-    scripts: []
+const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
+    var dom = document.createElement('html');
+    dom.innerHTML = xml;
+    const linksEls = dom.querySelectorAll('link[rel="stylesheet"]');
+    const scriptsEls = dom.querySelectorAll('script[type="text/javascript"]');
+    return {
+        styles: Array.from(linksEls).map(el => el.getAttribute('href')),
+        scripts: Array.from(scriptsEls).map(el => el.getAttribute('src')).filter(src => !src.match(/zone\.js/))
+    };
+}
+
+const transformOptsWithAssets = (opts: Options): Promise<null> => {
+    const url = `${opts.outputPath}/index.html`;
+    return new Promise((resolve, reject) => {
+        const req = new XMLHttpRequest();
+        req.onreadystatechange = (event) => {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                if (req.status >= 200 && req.status < 400) {
+                    const res = xmlToAssets(req.responseText);
+                    opts.styles = res.styles;
+                    opts.scripts = res.scripts;
+                    resolve(null);
+                } else {
+                    reject(`Try to load ${url}, status : ${this.status} => ${this.statusText}`);
+                }
+            }
+        };
+        req.open('GET', url, true);
+        req.send(null);
+    });
 };
 
 const getContainerEl = (opts: Options) => {
@@ -49,15 +73,19 @@ const onNotLoadingApp = (currentApp: string, singleSpa: any) => {
 };
 
 const loadAllAssets = (opts: Options) => {
-    const scriptsPromise = opts.scripts.reduce(
-        (prev: Promise<undefined>, fileName: string) => prev.then(loadScriptTag(`${opts.baseScriptUrl}/${fileName}`)),
-        Promise.resolve(undefined)
-    );
-    const stylesPromise = opts.styles.reduce(
-        (prev: Promise<undefined>, fileName: string) => prev.then(loadLinkTag(`${opts.baseScriptUrl}/${fileName}`)),
-        Promise.resolve(undefined)
-    )
-    return Promise.all([scriptsPromise, stylesPromise]);
+    return new Promise((resolve, reject) => {
+        transformOptsWithAssets(opts).then(() => {
+            const scriptsPromise = opts.scripts.reduce(
+                (prev: Promise<undefined>, fileName: string) => prev.then(loadScriptTag(`${opts.outputPath}/${fileName}`)),
+                Promise.resolve(undefined)
+            );
+            const stylesPromise = opts.styles.reduce(
+                (prev: Promise<undefined>, fileName: string) => prev.then(loadLinkTag(`${opts.outputPath}/${fileName}`)),
+                Promise.resolve(undefined)
+            )
+            Promise.all([scriptsPromise, stylesPromise]).then(resolve, reject);
+        }, reject);
+    });
 };
 
 const hashCode = (str: string): string => {
@@ -128,9 +156,7 @@ const bootstrap = (opts: Options, props: any) => {
 
 const mount = (opts: Options, props: any) => {
     return new Promise((resolve, reject) => {
-        const domEl = getContainerEl(opts);
-        const angularRootEl = document.createElement(opts.selector);
-        domEl.appendChild(angularRootEl);
+        getContainerEl(opts);
         if (window.singleSpaAngularCli[opts.name]) {
             window.singleSpaAngularCli[opts.name].mount(props);
             resolve();
@@ -162,48 +188,30 @@ const unmount = (opts: Options, props: any) => {
 const unload = (opts: Options, props: any) => {
     return new Promise((resolve, reject) => {
         opts.scripts.concat(opts.styles).reduce(
-            (prev: Promise<undefined>, scriptName: string) => prev.then(unloadTag(`${opts.baseScriptUrl}/${scriptName}`)),
+            (prev: Promise<undefined>, scriptName: string) => prev.then(unloadTag(`${opts.outputPath}/${scriptName}`)),
             Promise.resolve(undefined)
         );
         resolve();
     });
 };
 
-export function loader(userOpts: Options) {
-    if (typeof userOpts !== 'object') {
-      throw new Error(`single-spa-angular-cli requires a configuration object`);
+export function loader(opts: Options) {
+    if (typeof opts !== 'object') {
+        throw new Error(`single-spa-angular-cli requires a configuration object`);
     }
-  
-    const opts = {
-      ...defaultOpts,
-      ...userOpts
-    };
-  
+
     if (typeof opts.name !== 'string') {
-      throw new Error(`single-spa-angular-cli must be passed opts.name string`);
+        throw new Error(`single-spa-angular-cli must be passed opts.name string (ex : homeApps)`);
     }
-  
-    if (typeof opts.selector !== 'string') {
-      throw new Error(`single-spa-angular-cli must be passed opts.selector string`);
+
+    if (typeof opts.outputPath !== 'string') {
+        throw new Error(`single-spa-angular-cli must be passed opts.outputPath string (ex : /src/apps/menu/dist or http://localhost:4200 for develoment)`);
     }
-  
-    if (typeof opts.baseScriptUrl !== 'string') {
-      throw new Error(`single-spa-angular-cli must be passed opts.baseScriptUrl string`);
-    }
-  
-    if (typeof opts.styles !== 'object') {
-      throw new Error(`single-spa-angular-cli must be passed opts.style array of strings empty or not`);
-    }
-  
-    if (opts.scripts.length < 0) {
-      throw new Error(`single-spa-angular-cli must be passed opts.scripts array not empty`);
-    }
-  
+
     return {
-      bootstrap: bootstrap.bind(null, opts),
-      mount: mount.bind(null, opts),
-      unmount: unmount.bind(null, opts),
-      unload: unload.bind(null, opts)
+        bootstrap: bootstrap.bind(null, opts),
+        mount: mount.bind(null, opts),
+        unmount: unmount.bind(null, opts),
+        unload: unload.bind(null, opts)
     };
-  }
-  
+}
