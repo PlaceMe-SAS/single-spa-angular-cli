@@ -15,7 +15,7 @@ const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
 }
 
 const transformOptsWithAssets = (opts: Options): Promise<null> => {
-    const url = `${opts.outputPath}/index.html`;
+    const url = `${opts.baseHref}/index.html`;
     return new Promise((resolve, reject) => {
         const req = new XMLHttpRequest();
         req.onreadystatechange = (event) => {
@@ -76,11 +76,11 @@ const loadAllAssets = (opts: Options) => {
     return new Promise((resolve, reject) => {
         transformOptsWithAssets(opts).then(() => {
             const scriptsPromise = opts.scripts.reduce(
-                (prev: Promise<undefined>, fileName: string) => prev.then(loadScriptTag(`${opts.outputPath}/${fileName}`)),
+                (prev: Promise<undefined>, fileName: string) => prev.then(loadScriptTag(`${opts.baseHref}/${fileName}`)),
                 Promise.resolve(undefined)
             );
             const stylesPromise = opts.styles.reduce(
-                (prev: Promise<undefined>, fileName: string) => prev.then(loadLinkTag(`${opts.outputPath}/${fileName}`)),
+                (prev: Promise<undefined>, fileName: string) => prev.then(loadLinkTag(`${opts.baseHref}/${fileName}`)),
                 Promise.resolve(undefined)
             )
             Promise.all([scriptsPromise, stylesPromise]).then(resolve, reject);
@@ -188,7 +188,7 @@ const unmount = (opts: Options, props: any) => {
 const unload = (opts: Options, props: any) => {
     return new Promise((resolve, reject) => {
         opts.scripts.concat(opts.styles).reduce(
-            (prev: Promise<undefined>, scriptName: string) => prev.then(unloadTag(`${opts.outputPath}/${scriptName}`)),
+            (prev: Promise<undefined>, scriptName: string) => prev.then(unloadTag(`${opts.baseHref}/${scriptName}`)),
             Promise.resolve(undefined)
         );
         resolve();
@@ -201,11 +201,11 @@ export function loader(opts: Options) {
     }
 
     if (typeof opts.name !== 'string') {
-        throw new Error(`single-spa-angular-cli must be passed opts.name string (ex : homeApps)`);
+        throw new Error(`single-spa-angular-cli must be passed opts.name string (ex : app1)`);
     }
 
-    if (typeof opts.outputPath !== 'string') {
-        throw new Error(`single-spa-angular-cli must be passed opts.outputPath string (ex : /src/apps/menu/dist or http://localhost:4200 for develoment)`);
+    if (typeof opts.baseHref !== 'string') {
+        throw new Error(`single-spa-angular-cli must be passed opts.baseHref string (ex : /app1)`);
     }
 
     return {

@@ -8,14 +8,14 @@ An example can be found in the [single-spa-angular-cli-examples](https://github.
 First, in the child application, run `npm install --save single-spa-angular-cli`. Then, in your [single-spa application](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md), do the following:
 
 ```js
-// src/loaders/app1.js
+// loader.js
 
 import { loader } from 'single-spa-angular-cli';
 
 const lifecycles = loader({
     name: 'app1',
     selector: 'app1-root',
-    outputPath: '/src/apps/app1/dist'
+    baseHref: '/app1'
 });
 
 export const bootstrap = [
@@ -41,7 +41,7 @@ All options are passed to single-spa-angular2 via the `opts` parameter when call
 
 - `name`: (required) The name of the single spa application, ex : app.
 - `selector`: (required) The angular application root tag, ex : app-root.
-- `outputPath`: (required) The output path of the cli apps after ng build --prod.
+- `baseHref`: (required) The base href of your angular cli app, ex : /app.
 
 ## Full documentation here
 An example can be found in the [single-spa-angular-cli-examples](https://github.com/PlaceMe-SAS/single-spa-angular-cli-examples) repository.

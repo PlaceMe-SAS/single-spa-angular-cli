@@ -1,7 +1,7 @@
 export interface Options {
     name: string;
     selector: string;
-    outputPath: string;
+    baseHref: string;
     styles?: string[];
     scripts?: string[];
 }
