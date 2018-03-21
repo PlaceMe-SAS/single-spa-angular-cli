@@ -1,18 +1,17 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "outDir": "./lib",
         "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "removeComments": false,
-        "noImplicitAny": true,
-        "declaration": true,
-        "outDir": "./lib",
-        "stripInternal": true,
+        "target": "es5",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
         "lib": [
-            "es6",
+            "es2017",
             "dom"
         ]
     },
@@ -21,8 +20,5 @@
     ],
     "files": [
         "./node_modules/@types/core-js/index.d.ts"
-    ],
-    "angularCompilerOptions": {
-        "skipTemplateCodegen": true
-    }
+    ]
 }
