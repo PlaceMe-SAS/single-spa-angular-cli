@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "file": "single-spa-angular-cli.js",
+  "sources": [
+    "ng://single-spa-angular-cli/out/single-spa.module.ts",
+    "ng://single-spa-angular-cli/out/router/single-spa-router-link.directive.ts",
+    "ng://single-spa-angular-cli/out/router/single-spa-router.service.ts"
+  ],
+  "sourcesContent": [
+    "import { NgModule, ElementRef } from '@angular/core';\nimport { CommonModule } from '@angular/common';\n\nimport { SingleSpaRouterLinkDirective } from './router/single-spa-router-link.directive';\nimport { SingleSpaRouterService } from './router/single-spa-router.service';\n\n@NgModule({\n  imports: [\n    CommonModule\n  ],\n  declarations: [\n    SingleSpaRouterLinkDirective\n  ],\n  exports: [\n    SingleSpaRouterLinkDirective\n  ],\n  providers: [\n    SingleSpaRouterService\n  ]\n})\nexport class SingleSpaModule { }\n",
+    "import { Directive, HostListener, Input, OnChanges, SimpleChanges, HostBinding } from '@angular/core';\n\nimport { SingleSpaRouterService } from './single-spa-router.service';\n\n@Directive({\n  selector: '[singleSpaRouterLink]'\n})\nexport class SingleSpaRouterLinkDirective implements OnChanges {\n\n  @Input() public singleSpaRouterLink: string;\n  @HostBinding('href') private href: string;\n\n  constructor(\n    private singleSpaRouterService: SingleSpaRouterService\n  ) { }\n\n  @HostListener('click', ['$event']) onClick($event: Event) {\n    this.singleSpaRouterService.navigate(this.singleSpaRouterLink, $event);\n  }\n\n  ngOnChanges(changes: SimpleChanges) {\n    this.href = this.singleSpaRouterLink;\n  }\n\n}\n",
+    "import { Injectable } from '@angular/core';\n\ndeclare const location: any;\ndeclare const history: any;\n\n@Injectable()\nexport class SingleSpaRouterService {\n\n  constructor() { }\n\n  navigate(path: string, event?: Event): void {\n\n    history.pushState(null, null, path);\n    if (event) {\n      event.stopPropagation();\n      event.preventDefault();\n    }\n  }\n\n}\n"
+  ],
+  "names": [],
+  "mappings": ";;;;;;;AEAA,AAMA,MAAA,sBAAA,CAAA;IAEE,WAAF,GAAA,GAAmB;;;;;;IAEjB,QAAQ,CAAC,IAAY,EAAE,KAAa,EAAtC;QAEI,OAAO,CAAC,SAAS,CAAC,IAAI,EAAE,IAAI,EAAE,IAAI,CAAC,CAAC;QACpC,IAAI,KAAK,EAAE;YACT,KAAK,CAAC,eAAe,EAAE,CAAC;YACxB,KAAK,CAAC,cAAc,EAAE,CAAC;SACxB;KACF;;;IAZH,EAAA,IAAA,EAAC,UAAU,EAAX;;;;;;;;;ADLA,AAOA,MAAA,4BAAA,CAAA;;;;IAKE,WAAF,CACY,sBADZ,EAAA;QACY,IAAZ,CAAA,sBAAkC,GAAtB,sBAAsB,CAAlC;KACO;;;;;IAE8B,OAAO,CAAC,MAAa,EAA1D;QACI,IAAI,CAAC,sBAAsB,CAAC,QAAQ,CAAC,IAAI,CAAC,mBAAmB,EAAE,MAAM,CAAC,CAAC;;;;;;IAGzE,WAAW,CAAC,OAAsB,EAApC;QACI,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC,mBAAmB,CAAC;KACtC;;;IAlBH,EAAA,IAAA,EAAC,SAAS,EAAV,IAAA,EAAA,CAAW;gBACT,QAAQ,EAAE,uBAAuB;aAClC,EAAD,EAAA;;;;IAJA,EAAA,IAAA,EAAS,sBAAsB,GAA/B;;;IAOA,qBAAA,EAAA,CAAA,EAAA,IAAA,EAAG,KAAK,EAAR,EAAA;IACA,MAAA,EAAA,CAAA,EAAA,IAAA,EAAG,WAAW,EAAd,IAAA,EAAA,CAAe,MAAM,EAArB,EAAA,EAAA;IAMA,SAAA,EAAA,CAAA,EAAA,IAAA,EAAG,YAAY,EAAf,IAAA,EAAA,CAAgB,OAAO,EAAE,CAAC,QAAQ,CAAC,EAAnC,EAAA,EAAA;;;;;;;ADhBA,AAoBA,MAAA,eAAA,CAAA;;;IAdA,EAAA,IAAA,EAAC,QAAQ,EAAT,IAAA,EAAA,CAAU;gBACR,OAAO,EAAE;oBACP,YAAY;iBACb;gBACD,YAAY,EAAE;oBACZ,4BAA4B;iBAC7B;gBACD,OAAO,EAAE;oBACP,4BAA4B;iBAC7B;gBACD,SAAS,EAAE;oBACT,sBAAsB;iBACvB;aACF,EAAD,EAAA;;;;;;;;;;;;;;;"
+}

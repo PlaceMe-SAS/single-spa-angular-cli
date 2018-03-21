@@ -1,0 +1,12 @@
+{
+    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
+    "lib": {
+        "entryFile": "src/module/single-spa.module.ts"
+    },
+    "dest": "angular",
+    "preferBuiltins": false,
+    "externals": {
+        "@angular/core": "@angular/core",
+        "@angular/common": "@angular/common"
+    }
+}

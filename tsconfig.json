@@ -17,8 +17,5 @@
     },
     "include": [
         "./src/index.ts"
-    ],
-    "files": [
-        "./node_modules/@types/core-js/index.d.ts"
     ]
 }
