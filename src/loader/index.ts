@@ -9,7 +9,7 @@ const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
     const linksEls = dom.querySelectorAll('link[rel="stylesheet"]');
     const scriptsEls = dom.querySelectorAll('script[type="text/javascript"]');
     return {
-        styles: Array.from(linksEls).map(el => el.getAttribute('href')),
+        styles: Array.from(linksEls).map(el => el.getAttribute('href')).filter(src => !src.match(/fonts\.css/)),
         scripts: Array.from(scriptsEls).map(el => el.getAttribute('src')).filter(src => !src.match(/zone\.js/))
     };
 }
