@@ -7,8 +7,7 @@
   "scripts": {
     "build": "rimraf lib && tsc && babel src --out-dir lib && ng-packagr -p ng-package.json",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build",
-    "postinstall": "npm run build"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -34,7 +33,7 @@
     "@angular/compiler": "^5.2.9",
     "@angular/compiler-cli": "^5.2.9",
     "@angular/core": "^5.2.9",
-    "babel-cli": "^6.18.0",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
