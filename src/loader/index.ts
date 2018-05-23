@@ -4,7 +4,7 @@ declare const window: any;
 window.singleSpaAngularCli = window.singleSpaAngularCli || {};
 
 const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
-    var dom = document.createElement('html');
+    const dom = document.createElement('html');
     dom.innerHTML = xml;
     const linksEls = dom.querySelectorAll('link[rel="stylesheet"]');
     const scriptsEls = dom.querySelectorAll('script[type="text/javascript"]');
@@ -12,13 +12,13 @@ const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
         styles: Array.from(linksEls).map(el => el.getAttribute('href')).filter(src => !src.match(/fonts\.css/)),
         scripts: Array.from(scriptsEls).map(el => el.getAttribute('src')).filter(src => !src.match(/zone\.js/))
     };
-}
+};
 
 const transformOptsWithAssets = (opts: Options): Promise<null> => {
     const url = `${opts.baseHref}/index.html`;
     return new Promise((resolve, reject) => {
         const req = new XMLHttpRequest();
-        req.onreadystatechange = (event) => {
+        req.onreadystatechange = () => {
             if (req.readyState === XMLHttpRequest.DONE) {
                 if (req.status >= 200 && req.status < 400) {
                     const res = xmlToAssets(req.responseText);
@@ -36,16 +36,11 @@ const transformOptsWithAssets = (opts: Options): Promise<null> => {
 };
 
 const getContainerEl = (opts: Options) => {
-    let el = document.querySelector(opts.selector);
-    if (!el) {
-        el = document.createElement(opts.selector);
-        document.body.appendChild(el);
-    }
-    return el;
+    return document.querySelector(opts.selector);
 };
 
-const noLoadingApp = (currentApp: string, singleSpa: any) => {
-    const { getAppNames, getAppStatus, BOOTSTRAPPING } = singleSpa
+const  noLoadingApp = (currentApp: string, singleSpa: any) => {
+    const { getAppNames, getAppStatus, BOOTSTRAPPING } = singleSpa;
     const firstInMounting = getAppNames().find((appName: string) => {
         return getAppStatus(appName) === BOOTSTRAPPING;
     });
@@ -89,7 +84,7 @@ const loadAllAssets = (opts: Options) => {
 };
 
 const hashCode = (str: string): string => {
-    var hash = 0;
+    let hash = 0;
     if (str.length == 0) return hash.toString();
     for (let i = 0; i < str.length; i++) {
         hash = (hash << 5) - hash + str.charCodeAt(i);
@@ -136,7 +131,7 @@ const loadLinkTag = (url: string) => {
 
 const unloadTag = (url: string) => {
     return () => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const tag = document.getElementById(hashCode(url));
             document.head.removeChild(tag);
             resolve();
@@ -146,7 +141,7 @@ const unloadTag = (url: string) => {
 
 const bootstrap = (opts: Options, props: any) => {
     window.singleSpaAngularCli.isSingleSpa = true;
-    const { singleSpa } = props
+    const { singleSpa } = props;
     return new Promise((resolve, reject) => {
         onNotLoadingApp(opts.name, singleSpa).then(() => {
             loadAllAssets(opts).then(resolve, reject);
@@ -168,11 +163,15 @@ const mount = (opts: Options, props: any) => {
 };
 
 const unmount = (opts: Options, props: any) => {
-    const { singleSpa: { unloadApplication, getAppNames } } = props
+    const { singleSpa: { unloadApplication, getAppNames } } = props;
     return new Promise((resolve, reject) => {
         if (window.singleSpaAngularCli[opts.name]) {
+            const newElement = document.createElement(opts.selector);
+            const existingElement = getContainerEl(opts);
+            existingElement.parentNode.appendChild(newElement);
+
             window.singleSpaAngularCli[opts.name].unmount();
-            getContainerEl(opts).remove();
+
             if (getAppNames().indexOf(opts.name) !== -1) {
                 unloadApplication(opts.name, { waitForUnmount: true });
                 resolve();
@@ -186,7 +185,7 @@ const unmount = (opts: Options, props: any) => {
 };
 
 const unload = (opts: Options, props: any) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         opts.scripts.concat(opts.styles).reduce(
             (prev: Promise<undefined>, scriptName: string) => prev.then(unloadTag(`${opts.baseHref}/${scriptName}`)),
             Promise.resolve(undefined)
