@@ -41,6 +41,7 @@ All options are passed to single-spa-angular2 via the `opts` parameter when call
 
 - `name`: (required) The name of the single spa application, ex : app.
 - `selector`: (required) The angular application root tag, ex : app-root.
+- `container`: (optional) The html container selector, ex : ".container" or "#container".
 - `baseHref`: (required) The base href of your angular cli app, ex : /app.
 
 ## Full documentation here
