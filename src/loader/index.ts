@@ -39,7 +39,8 @@ const getContainerEl = (opts: Options) => {
     let el = document.querySelector(opts.selector);
     if (!el) {
         el = document.createElement(opts.selector);
-        document.body.appendChild(el);
+        let container = opts.container ? document.querySelector(opts.container) : document.body;
+        container.appendChild(el);
     }
     return el;
 };
