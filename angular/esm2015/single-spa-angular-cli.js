@@ -89,8 +89,6 @@ SingleSpaModule.decorators = [
                 ]
             },] },
 ];
-/** @nocollapse */
-SingleSpaModule.ctorParameters = () => [];
 
 /**
  * @fileoverview added by tsickle

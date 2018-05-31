@@ -1,14 +1,9 @@
 {
   "name": "single-spa-angular-cli",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Helpers for building single-spa applications which use Angular Cli",
   "main": "bundles/single-spa-angular-cli.umd.js",
   "typings": "single-spa-angular-cli.d.ts",
-  "scripts": {
-    "build": "rimraf lib && tsc && babel src --out-dir lib && ng-packagr -p ng-package.json",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:PlaceMe-SAS/single-spa-angular-cli.git"
@@ -25,8 +20,6 @@
   },
   "homepage": "https://github.com/PlaceMe-SAS/single-spa-angular-cli#readme",
   "dependencies": {
-    "@types/core-js": "^0.9.45",
-    "rxjs": "^5.5.6",
     "tslib": "^1.7.1"
   },
   "devDependencies": {
@@ -52,7 +45,9 @@
   },
   "peerDependenies": {
     "@angular/common": "^5.2.9",
-    "@angular/core": "^5.2.9"
+    "@angular/core": "^5.2.9",
+    "@types/core-js": "^0.9.45",
+    "rxjs": "^5.5.6"
   },
   "module": "esm5/single-spa-angular-cli.js",
   "es2015": "esm2015/single-spa-angular-cli.js",

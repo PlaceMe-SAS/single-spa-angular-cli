@@ -1,6 +1,6 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common')) :
-	typeof define === 'function' && define.amd ? define(['exports', '@angular/core', '@angular/common'], factory) :
+	typeof define === 'function' && define.amd ? define('single-spa-angular-cli', ['exports', '@angular/core', '@angular/common'], factory) :
 	(factory((global['single-spa-angular-cli'] = {}),global.ng.core,global.ng.common));
 }(this, (function (exports,core,common) { 'use strict';
 
@@ -66,7 +66,6 @@ SingleSpaModule.decorators = [
                 ]
             },] },
 ];
-SingleSpaModule.ctorParameters = function () { return []; };
 
 exports.SingleSpaModule = SingleSpaModule;
 exports.ɵa = SingleSpaRouterLinkDirective;
