@@ -156,14 +156,19 @@ const bootstrap = (opts: Options, props: any) => {
 };
 
 const mount = (opts: Options, props: any) => {
+    const { singleSpa } = props;
     return new Promise((resolve, reject) => {
-        getContainerEl(opts);
-        if (window.singleSpaAngularCli[opts.name]) {
-            window.singleSpaAngularCli[opts.name].mount(props);
-            resolve();
+        if (singleSpa.getAppStatus(opts.name) !== singleSpa.MOUNTED) {
+            getContainerEl(opts);
+            if (window.singleSpaAngularCli[opts.name]) {
+                window.singleSpaAngularCli[opts.name].mount(props);
+                resolve();
+            } else {
+                console.error(`Cannot mount ${opts.name} because that is not bootstraped`);
+                reject();
+            }
         } else {
-            console.error(`Cannot mount ${opts.name} because that is not bootstraped`);
-            reject();
+            resolve();
         }
     });
 };
