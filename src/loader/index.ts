@@ -66,7 +66,8 @@ const onNotLoadingApp = (currentApp: string, props: any) => {
                 clearInterval(interval);
                 resolve();
             }
-            if (time >= (props.customProps.bootstrapMaxTime || 3000)) {
+            const maxBootstrapTime = (props.customProps ? (props.customProps.setBootstrapMaxTime || 3000) : 3000);
+            if (time >= maxBootstrapTime) {
                 clearInterval(interval);
                 reject(`The application could not be loaded because another is still loading more than ${time} milliseconds`);
             }
