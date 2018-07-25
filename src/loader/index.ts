@@ -177,7 +177,7 @@ const unmount = (opts: Options, props: any) => {
     const { singleSpa: { unloadApplication, getAppNames } } = props
     return new Promise((resolve, reject) => {
         if (window.singleSpaAngularCli[opts.name]) {
-            if (props.customProps && props.customProps.preventUnmount) {
+            if (props.preventUnmount) {
                 resolve();
             } else {
                 window.singleSpaAngularCli[opts.name].unmount();
