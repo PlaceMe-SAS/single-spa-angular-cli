@@ -172,13 +172,17 @@ const unmount = (opts: Options, props: any) => {
     const { singleSpa: { unloadApplication, getAppNames } } = props
     return new Promise((resolve, reject) => {
         if (window.singleSpaAngularCli[opts.name]) {
-            window.singleSpaAngularCli[opts.name].unmount();
-            getContainerEl(opts).remove();
-            if (getAppNames().indexOf(opts.name) !== -1) {
-                unloadApplication(opts.name, { waitForUnmount: true });
+            if (props.customProps && props.customProps.preventUnmount) {
                 resolve();
             } else {
-                reject(`Cannot unmount ${opts.name} because that ${opts.name} is not part of the decalred applications : ${getAppNames()}`);
+                window.singleSpaAngularCli[opts.name].unmount();
+                getContainerEl(opts).remove();
+                if (getAppNames().indexOf(opts.name) !== -1) {
+                    unloadApplication(opts.name, {waitForUnmount: true});
+                    resolve();
+                } else {
+                    reject(`Cannot unmount ${opts.name} because that ${opts.name} is not part of the decalred applications : ${getAppNames()}`);
+                }
             }
         } else {
             reject(`Cannot unmount ${opts.name} because that is not bootstraped`);
