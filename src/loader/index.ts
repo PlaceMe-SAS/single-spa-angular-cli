@@ -173,7 +173,10 @@ const unmount = (opts: Options, props: any) => {
     return new Promise((resolve, reject) => {
         if (window.singleSpaAngularCli[opts.name]) {
             window.singleSpaAngularCli[opts.name].unmount();
-            getContainerEl(opts).remove();
+            const container = getContainerEl(opts);
+            if(container.parentNode) {
+                container.parentNode.removeChild(container);
+            }
             if (getAppNames().indexOf(opts.name) !== -1) {
                 unloadApplication(opts.name, { waitForUnmount: true });
                 resolve();
