@@ -57,7 +57,7 @@ const noLoadingApp = (currentApp: string, singleSpa: any) => {
 
 const onNotLoadingApp = (currentApp: string, props: any) => {
     const { singleSpa } = props;
-    const maxBootstrapTime = (props.customProps ? (props.customProps.bootstrapMaxTime || 3000) : 3000);
+    const bootstrapMaxTime = props.bootstrapMaxTime || 3000;
     return new Promise((resolve, reject) => {
         let time = 0;
         const INTERVAL = 100;
@@ -67,7 +67,7 @@ const onNotLoadingApp = (currentApp: string, props: any) => {
                 clearInterval(interval);
                 resolve();
             }
-            if (time >= maxBootstrapTime) {
+            if (time >= bootstrapMaxTime) {
                 clearInterval(interval);
                 reject(`The application could not be loaded because another is still loading more than ${time} milliseconds`);
             }
