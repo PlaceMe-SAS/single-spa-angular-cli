@@ -4,7 +4,7 @@ declare const window: any;
 window.singleSpaAngularCli = window.singleSpaAngularCli || {};
 
 const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
-    var dom = document.createElement('html');
+    const dom = document.createElement('html');
     dom.innerHTML = xml;
     const linksEls = dom.querySelectorAll('link[rel="stylesheet"]');
     const scriptsEls = dom.querySelectorAll('script[type="text/javascript"]');
@@ -12,7 +12,7 @@ const xmlToAssets = (xml: string): { styles: string[], scripts: string[] } => {
         styles: Array.from(linksEls).map(el => el.getAttribute('href')),
         scripts: Array.from(scriptsEls).map(el => el.getAttribute('src')).filter(src => !src.match(/zone\.js/))
     };
-}
+};
 
 const transformOptsWithAssets = (opts: Options): Promise<null> => {
     const url = `${opts.baseHref}/index.html`;
@@ -55,7 +55,9 @@ const noLoadingApp = (currentApp: string, singleSpa: any) => {
     return currentIndex <= firstInMountingIndex;
 };
 
-const onNotLoadingApp = (currentApp: string, singleSpa: any) => {
+const onNotLoadingApp = (currentApp: string, props: any) => {
+    const { singleSpa } = props;
+    const bootstrapMaxTime = props.bootstrapMaxTime || 3000;
     return new Promise((resolve, reject) => {
         let time = 0;
         const INTERVAL = 100;
@@ -65,7 +67,7 @@ const onNotLoadingApp = (currentApp: string, singleSpa: any) => {
                 clearInterval(interval);
                 resolve();
             }
-            if (time >= 3000) {
+            if (time >= bootstrapMaxTime) {
                 clearInterval(interval);
                 reject(`The application could not be loaded because another is still loading more than ${time} milliseconds`);
             }
@@ -83,15 +85,15 @@ const loadAllAssets = (opts: Options) => {
             const stylesPromise = opts.styles.reduce(
                 (prev: Promise<undefined>, fileName: string) => prev.then(loadLinkTag(`${opts.baseHref}/${fileName}`)),
                 Promise.resolve(undefined)
-            )
+            );
             Promise.all([scriptsPromise, stylesPromise]).then(resolve, reject);
         }, reject);
     });
 };
 
 const hashCode = (str: string): string => {
-    var hash = 0;
-    if (str.length == 0) return hash.toString();
+    let hash = 0;
+    if (str.length === 0) return hash.toString();
     for (let i = 0; i < str.length; i++) {
         hash = (hash << 5) - hash + str.charCodeAt(i);
         hash = hash & hash;
@@ -147,9 +149,8 @@ const unloadTag = (url: string) => {
 
 const bootstrap = (opts: Options, props: any) => {
     window.singleSpaAngularCli.isSingleSpa = true;
-    const { singleSpa } = props
     return new Promise((resolve, reject) => {
-        onNotLoadingApp(opts.name, singleSpa).then(() => {
+        onNotLoadingApp(opts.name, props).then(() => {
             loadAllAssets(opts).then(resolve, reject);
         }, reject);
     });
@@ -174,14 +175,17 @@ const mount = (opts: Options, props: any) => {
 };
 
 const unmount = (opts: Options, props: any) => {
-    const { singleSpa: { unloadApplication, getAppNames } } = props
+    const { singleSpa: { unloadApplication, getAppNames } } = props;
     return new Promise((resolve, reject) => {
         if (window.singleSpaAngularCli[opts.name]) {
             if (props.preventUnmount) {
                 resolve();
             } else {
                 window.singleSpaAngularCli[opts.name].unmount();
-                getContainerEl(opts).remove();
+                const container = getContainerEl(opts);
+                if (container.parentNode) {
+                    container.parentNode.removeChild(container);
+                }
                 if (getAppNames().indexOf(opts.name) !== -1) {
                     unloadApplication(opts.name, {waitForUnmount: true});
                     resolve();
