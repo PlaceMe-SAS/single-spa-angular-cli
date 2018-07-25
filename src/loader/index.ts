@@ -57,7 +57,7 @@ const noLoadingApp = (currentApp: string, singleSpa: any) => {
 
 const onNotLoadingApp = (currentApp: string, props: any) => {
     const { singleSpa } = props;
-    const maxBootstrapTime = (props.customProps ? (props.customProps.setBootstrapMaxTime || 3000) : 3000);
+    const maxBootstrapTime = (props.customProps ? (props.customProps.bootstrapMaxTime || 3000) : 3000);
     return new Promise((resolve, reject) => {
         let time = 0;
         const INTERVAL = 100;
