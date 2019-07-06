@@ -1,4 +1,7 @@
+# This project is deprecated. Use [single-spa-angular]() instead, which supports Angular CLI and Angular 7+
+
 # single-spa-angular-cli
+
 Helpers for building [single-spa](https://github.com/CanopyTax/single-spa) applications which use Angular Cli.
 
 ## Example
